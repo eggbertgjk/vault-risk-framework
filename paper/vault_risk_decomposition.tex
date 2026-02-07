@@ -167,6 +167,8 @@ Our work intersects several literatures.
 
 \textbf{DeFi Risk Measurement.} Closest to our work, Xu and Livshits \cite{xu2022} propose a framework for quantifying DeFi protocol risk. Nexus Mutual \cite{nexusmutual2023} provides market-based risk pricing through parametric insurance. Artzner et al.\ \cite{artzner1999} establish coherent risk measure axioms that inform our aggregation design---our MAX propagation satisfies monotonicity and sub-additivity. Holló et al.\ \cite{hollo2012} construct the CISS composite indicator for systemic stress, whose aggregation methodology parallels our primitive-to-vault composition.
 
+\textbf{Systemic Risk in Crypto.} Farzulla and Maksakov \cite{farzulla2026asri} propose the Adaptive Systemic Risk Index (ASRI) for crypto markets, using HMM regime detection across four sub-indices (stablecoin concentration, DeFi liquidity, contagion, regulatory opacity). Their framework operates at the macro level---detecting \textit{when} the system is stressed---while ours operates at the micro level, identifying \textit{where} risk concentrates within individual vault architectures. The two approaches are complementary: ASRI signals could trigger portfolio-level rebalancing, while VRS decomposition guides vault-level allocation within each regime. Separately, Farzulla \cite{farzulla2025wp} finds that whitepaper narratives do not predict market factor structure, reinforcing our premise that risk should be measured from observable on-chain properties rather than stated intentions.
+
 \subsection{Paper Structure}
 
 Section \ref{sec:model} formalizes the vault graph model. Section \ref{sec:primitives} defines atomic primitives and proves completeness. Section \ref{sec:propagation} develops risk propagation. Section \ref{sec:calibration} presents empirical calibration. Section \ref{sec:application} demonstrates applications. Section \ref{sec:discussion} discusses limitations and extensions.
@@ -1435,6 +1437,16 @@ DeFi Safety.
 L.~Moore and S.~Christin.
 \newblock Beware the middleman: Empirical analysis of Bitcoin-exchange risk.
 \newblock In \textit{Financial Cryptography}, 2013.
+
+\bibitem{farzulla2026asri}
+M.~Farzulla and A.~Maksakov.
+\newblock Adaptive systemic risk index for cryptocurrency markets.
+\newblock \textit{arXiv:2602.03874}, 2026.
+
+\bibitem{farzulla2025wp}
+M.~Farzulla.
+\newblock Do cryptocurrency whitepapers predict market behavior? A factor analysis approach.
+\newblock \textit{arXiv:2601.20336}, 2025.
 
 \bibitem{taleb2012}
 N.~N.~Taleb.
