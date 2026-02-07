@@ -78,16 +78,30 @@ def categorize_exploit(technique: str, target_type: str = "") -> str:
     return "CONTRACT"
 
 
-def categorize_dataset(csv_path: str) -> list:
+def categorize_dataset(csv_path: str, raw_mode: bool = False) -> list:
     """Categorize all exploits in a CSV file.
+
+    The provided dataset (data/defi_exploits.csv) is already filtered.
+    If processing raw DeFiLlama API output, use raw_mode=True to apply:
+        1. De minimis: exclude exploits < $100K
+        2. Deduplication: by (name_lower + date), keep higher loss amount
+        3. CeFi exclusion: remove pure centralized exchange hacks
 
     Args:
         csv_path: Path to DeFiLlama-format exploit CSV
+        raw_mode: If True, apply all three filters (for raw API data).
+                  If False (default), only categorize (dataset already cleaned).
 
     Returns:
         List of dicts with added 'primitive' field
     """
-    results = []
+    # CeFi keywords — centralized exchange/custodian hacks with no on-chain component
+    CEFI_KEYWORDS = [
+        "centralized exchange", "cefi", "custodian", "mt. gox", "mt gox",
+        "bitfinex", "coincheck", "zaif", "cryptopia", "quadrigacx",
+    ]
+
+    raw_rows = []
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -95,16 +109,48 @@ def categorize_dataset(csv_path: str) -> list:
             target_type = row.get("targetType", row.get("target_type", ""))
             amount = float(row.get("amount", row.get("amount_m", 0)) or 0)
 
-            # De minimis filter: exclude < $100K
-            if "amount_m" in row:
-                if amount < 0.1:
+            if raw_mode:
+                # Filter 1: De minimis — exclude < $100K
+                if "amount_m" in row:
+                    if amount < 0.1:
+                        continue
+                elif amount < 100_000:
                     continue
-            elif amount < 100_000:
-                continue
 
-            primitive = categorize_exploit(technique, target_type)
-            row["primitive"] = primitive
-            results.append(row)
+                # Filter 3: CeFi exclusion
+                text = f"{row.get('name', '')} {technique} {target_type}".lower()
+                if any(kw in text for kw in CEFI_KEYWORDS):
+                    continue
+
+            raw_rows.append(row)
+
+    if raw_mode:
+        # Filter 2: Deduplicate by (name_lower + date), keep higher loss
+        seen: Dict[str, dict] = {}
+        for row in raw_rows:
+            name = row.get("name_lower", row.get("name", "")).lower().strip()
+            date = row.get("date", "")
+            key = f"{name}|{date}"
+            amount = float(row.get("amount", row.get("amount_m", 0)) or 0)
+
+            if key in seen:
+                existing_amt = float(
+                    seen[key].get("amount", seen[key].get("amount_m", 0)) or 0
+                )
+                if amount > existing_amt:
+                    seen[key] = row
+            else:
+                seen[key] = row
+        raw_rows = list(seen.values())
+
+    # Categorize
+    results = []
+    for row in raw_rows:
+        technique = row.get("technique", row.get("classification", ""))
+        target_type = row.get("targetType", row.get("target_type", ""))
+        primitive = categorize_exploit(technique, target_type)
+        row["primitive"] = primitive
+        results.append(row)
 
     return results
 
