@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz
+.DS_Store
+*.swp
+.claude/
