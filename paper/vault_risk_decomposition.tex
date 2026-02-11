@@ -725,16 +725,16 @@ Figure \ref{fig:pt-decomp} visualizes this decomposition difference.
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[scale=0.85, every node/.style={font=\scriptsize}]
+\begin{tikzpicture}[scale=0.70, every node/.style={font=\scriptsize}]
     % Title row
     \node[font=\small\bfseries] at (-2.8, 2.8) {Vault A (Immutable)};
     \node[font=\small\bfseries] at (2.8, 2.8) {Vault B (Upgradeable)};
 
-    % Row labels (left side)
-    \node[right] at (-5.5, 2) {CONTRACT};
-    \node[right] at (-5.5, 1.2) {ORACLE};
-    \node[right] at (-5.5, 0.4) {GOVERNANCE};
-    \node[right] at (-5.5, -0.4) {OPERATIONAL};
+    % Row labels (left side) — anchor=east to right-align before bars
+    \node[anchor=east, font=\tiny, inner sep=0pt] at (-4.0, 2) {CONTRACT};
+    \node[anchor=east, font=\tiny, inner sep=0pt] at (-4.0, 1.2) {ORACLE};
+    \node[anchor=east, font=\tiny, inner sep=0pt] at (-4.0, 0.4) {GOVERNANCE};
+    \node[anchor=east, font=\tiny, inner sep=0pt] at (-4.0, -0.4) {OPERATIONAL};
 
     % Vault A bars (horizontal)
     \fill[red!50] (-3.8, 1.8) rectangle (-3.0, 2.2);  % C: 8
